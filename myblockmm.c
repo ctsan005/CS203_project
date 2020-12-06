@@ -89,7 +89,7 @@ void *mythreaded_vector_blockmm(void *t)
                         // vc4 = _mm256_add_pd(vc4,_mm256_mul_pd(va,vb4));
                  }
                      _mm256_store_pd(&c[ii][jj],vc);
-                     _mm256_store_pd(&c[ii][jj+4],vc2);
+                    //  _mm256_store_pd(&c[ii][jj+4],vc2);
                     //  _mm256_store_pd(&c[ii][jj+8],vc3);
                     //  _mm256_store_pd(&c[ii][jj+12],vc4);
             }
