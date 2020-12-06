@@ -51,7 +51,7 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
 void *mythreaded_vector_blockmm(void *t)
 {
   int i,j,k, ii, jj, kk, x;
-  __m256d va, vb,vb2, vc,vc2;
+  __m256d va, vb,vb2,vb3,vb4, vc,vc2,vc3,vc4;
   struct thread_info tinfo = *(struct thread_info *)t;
   int number_of_threads = tinfo.number_of_threads;
   int tid =  tinfo.tid;
@@ -68,25 +68,30 @@ void *mythreaded_vector_blockmm(void *t)
       {        
          for(ii = i; ii < i+(ARRAY_SIZE/n); ii++)
          {
-            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH*2)
+            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH*4)
             {
                     vc = _mm256_load_pd(&c[ii][jj]);
                     vc2 = _mm256_load_pd(&c[ii][jj+4]);
-
+                    vc3 = _mm256_load_pd(&c[ii][jj+8]);
+                    vc4 = _mm256_load_pd(&c[ii][jj+12]);
                     
                 for(kk = k; kk < k+(ARRAY_SIZE/n); kk++)
                 {
                         va = _mm256_broadcast_sd(&a[ii][kk]);
                         vb = _mm256_load_pd(&b[kk][jj]);
                         vb2 = _mm256_load_pd(&b[kk][jj+4]);
-
+                        vb3 = _mm256_load_pd(&b[kk][jj+8]);
+                        vb4 = _mm256_load_pd(&b[kk][jj+12]);
 
                         vc = _mm256_add_pd(vc,_mm256_mul_pd(va,vb));
                         vc2 = _mm256_add_pd(vc2,_mm256_mul_pd(va,vb2));
-
+                        // vc3 = _mm256_add_pd(vc3,_mm256_mul_pd(va,vb3));
+                        // vc4 = _mm256_add_pd(vc4,_mm256_mul_pd(va,vb4));
                  }
                      _mm256_store_pd(&c[ii][jj],vc);
                      _mm256_store_pd(&c[ii][jj+4],vc2);
+                    //  _mm256_store_pd(&c[ii][jj+8],vc3);
+                    //  _mm256_store_pd(&c[ii][jj+12],vc4);
             }
           }
       }
