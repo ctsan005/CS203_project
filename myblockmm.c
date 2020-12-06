@@ -25,8 +25,8 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
   int i=0;
   pthread_t *thread;
   struct thread_info *tinfo;
-  strcpy(name,"Please replace this with your name!");
-  strcpy(SID,"Please replace this with your SID!");
+  strcpy(name,"Chi Chiu Tsang");
+  strcpy(SID,"861265376");
   thread = (pthread_t *)malloc(sizeof(pthread_t)*number_of_threads);
   tinfo = (struct thread_info *)malloc(sizeof(struct thread_info)*number_of_threads);
 
@@ -51,7 +51,7 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
 void *mythreaded_vector_blockmm(void *t)
 {
   int i,j,k, ii, jj, kk, x;
-  __m256d va, vb, vc;
+  __m256d va, vb,vb2, vc,vc2;
   struct thread_info tinfo = *(struct thread_info *)t;
   int number_of_threads = tinfo.number_of_threads;
   int tid =  tinfo.tid;
@@ -68,21 +68,28 @@ void *mythreaded_vector_blockmm(void *t)
       {        
          for(ii = i; ii < i+(ARRAY_SIZE/n); ii++)
          {
-            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH)
+            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH*2)
             {
                     vc = _mm256_load_pd(&c[ii][jj]);
+                    vc2 = _mm256_load_pd(&c[ii][jj+4]);
+
                     
                 for(kk = k; kk < k+(ARRAY_SIZE/n); kk++)
                 {
                         va = _mm256_broadcast_sd(&a[ii][kk]);
                         vb = _mm256_load_pd(&b[kk][jj]);
+                        vb2 = _mm256_load_pd(&b[kk][jj+4]);
+
+
                         vc = _mm256_add_pd(vc,_mm256_mul_pd(va,vb));
+                        vc2 = _mm256_add_pd(vc2,_mm256_mul_pd(va,vb2));
+
                  }
                      _mm256_store_pd(&c[ii][jj],vc);
+                     _mm256_store_pd(&c[ii][jj+4],vc2);
             }
           }
       }
     }
   }  
 }
-
