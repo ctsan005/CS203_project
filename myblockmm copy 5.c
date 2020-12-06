@@ -157,35 +157,45 @@ void *mythreaded_vector_blockmm(void *t)
                           va03 = _mm256_load_pd(&a[ii+3][kk]);
 
                           
+                          if(((double*)&va00)[0] != tt ){
+                            printf("va00 num: %f %f %f %f with tt %f\n",((double*)&va00)[0],((double*)&va00)[1],((double*)&va00)[2],((double*)&va00)[3],tt);
+                            return NULL;
+                          }
+                          if(((double*)&vb00)[0] != tt2){
+                            printf("wrong with num b\n");
+                            return NULL;
+                          }
+
+                          
 
                           __m256d t = _mm256_mul_pd(va00,vb00);
 
+                          if(kk <10){
+                            if(((double*)&t)[0] != ((double*)&va00)[0] *((double*)&vb00)[0] ){
+                              printf("wrong with mul\n");
+                              return NULL;
+                            }
+                          }
+
+                          va00 = (_mm256_mul_pd(va00,vb00), _mm256_mul_pd(va01,vb00));
+                          va02 = _mm256_hadd_pd(_mm256_mul_pd(va02,vb00), _mm256_mul_pd(va03,vb00));
+                          
                           test[0] = ((double*)&t)[0];
                           test[1] = ((double*)&t)[1];
                           test[2] = ((double*)&t)[2];
                           test[3] = ((double*)&t)[3];
 
-                          // va00 = _mm256_hadd_pd(_mm256_mul_pd(va00,vb00), _mm256_mul_pd(va01,vb00));
-                          va00 = _mm256_hadd_pd(_mm256_mul_pd(va00,vb00), _mm256_mul_pd(va01,vb00));
-                          va02 = _mm256_hadd_pd(_mm256_mul_pd(va02,vb00), _mm256_mul_pd(va03,vb00));
-
-                          vc0 += test[0] + test[1] + test[2] + test[3];
-
-                          // if(((double*)&va00)[0] + ((double*)&va00)[2] != test[0] + test[1] + test[2] + test[3]){
-                          //   printf("Wrong with sum %f and %f with the diff %f\n", ((double*)&va00)[0] + ((double*)&va00)[2], test[0] + test[1] + test[2] + test[3], ((double*)&va00)[0] + ((double*)&va00)[2] -(test[0] + test[1] + test[2] + test[3] ) );
-                          // }
+                          vc0 += ((double*)&va00)[0] + ((double*)&va00)[2];
                           vc1 += ((double*)&va00)[1] + ((double*)&va00)[3];
                           vc2 += ((double*)&va02)[0] + ((double*)&va02)[2];
-                          vc3 += ((double*)&va02)[1] + ((double*)&va02)[3];
-
-                          
+                          vc3 += ((double*)&va02)[1] + ((double*)&va02)[3];                         
 
                           
                         }
 
-                        // if(tid == 0 && testnum != test[kk%4]){
-                        //   printf("Something wrong with testnum as testnum = %f and test = %f with k = %d\n",testnum, test[kk%4], kk);
-                        // }
+                        if(tid == 0 && testnum != test[kk%4]){
+                          printf("Something wrong with testnum as testnum = %f and test = %f with k = %d\n",testnum, test[kk%4], kk);
+                        }
                         if(kk%4 == 3 && vc0 != vc00){
                           printf("Something wrong with add %f and %f and difference = %f with k = %d\n",vc0,vc00,vc0-vc00,kk);
                           return NULL;
