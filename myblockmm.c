@@ -67,7 +67,7 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
 
   //if use the tranpose of C for output for thread, need to rotate back
   for(i = 0; i < ARRAY_SIZE; i += 1){
-    for(int j = 0; j < ARRAY_SIZE; j+=1){
+    for(j = 0; j < ARRAY_SIZE; j+=1){
       c[j][i] = c_t[i][j];
     }
   }
