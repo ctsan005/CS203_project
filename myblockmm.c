@@ -61,6 +61,10 @@ void *mythreaded_vector_blockmm(void *t)
   double **c = tinfo.c;
   int ARRAY_SIZE = tinfo.array_size;
   int n = tinfo.n;
+  //if the block size is too big, reduce it
+  if(n >256 && n%2 == 0){
+    n = n/2;
+  }
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
   {
     for(j = 0; j < ARRAY_SIZE; j+=(ARRAY_SIZE/n))
@@ -69,7 +73,7 @@ void *mythreaded_vector_blockmm(void *t)
       {        
          for(ii = i; ii < i+(ARRAY_SIZE/n); ii+=2)
          {
-            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH*4)
+            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH*2)
             {
                     vc = _mm256_load_pd(&c[ii][jj]);
                     vc2 = _mm256_load_pd(&c[ii][jj+4]);
