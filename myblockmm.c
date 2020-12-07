@@ -62,7 +62,7 @@ void *mythreaded_vector_blockmm(void *t)
   int ARRAY_SIZE = tinfo.array_size;
   int n = tinfo.n;
   //if the block size is too big, reduce it
-  while(n >64 && n%4 == 0){
+  while(n >64 && n%8 == 0){
     n = n/2;
   }
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
