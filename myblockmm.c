@@ -22,7 +22,7 @@ char SID[128];
 #define VECTOR_WIDTH 4
 void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int ARRAY_SIZE, int number_of_threads)
 {
-  int i=0;
+  int i=0,j = 0;
   pthread_t *thread;
   struct thread_info *tinfo;
   strcpy(name,"Chi Chiu Tsang");
@@ -42,7 +42,7 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
   }
 
   for(i = 0; i < ARRAY_SIZE; i += 1){
-    for(int j = 0; j < ARRAY_SIZE; j+=1){
+    for( j = 0; j < ARRAY_SIZE; j+=1){
       b_t[i][j] = b[j][i];
       c_t[i][j] = 0;
     }
