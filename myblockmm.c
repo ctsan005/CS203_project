@@ -51,7 +51,7 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
 void *mythreaded_vector_blockmm(void *t)
 {
   int i,j,k, ii, jj, kk, x;
-  __m256d va,va2,va3,va4, vb,vb2,vb3, vc,vc2,vc3,vc4,vc5,vc6,vc7,vc8;
+  register __m256d va,va2, vb,vb2, vc,vc2,vc3,vc4,vc5,vc6,vc7,vc8;
   struct thread_info tinfo = *(struct thread_info *)t;
   int number_of_threads = tinfo.number_of_threads;
   int tid =  tinfo.tid;
